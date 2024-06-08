@@ -1,0 +1,84 @@
+<%- include("../partials/head", {title:"Home"}) %>
+    <%-include("../partials/sidebar") %>
+
+    <div class="content">
+        <div class="container">
+            <div class="boxcont">
+                <h1>Add a due</h1>
+                <hr>
+
+                <form action=<%= prevDue._id?'/due?editid='+prevDue._id+"&redir="+redir:'/due?redir='+redir %> method="POST">
+                    <div class="mb-3 row mt-5">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Company</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="compId" required>
+
+                                <% for( let i = 0; i < companies.length; i++ ) { %>
+                                    <% if (companies[i]._id == companyId) { %>
+                                        <option selected value=<%= companies[i]._id %> > <%= companies[i].compName %> </option>
+                                    <% } else { %>
+                                        <option value=<%= companies[i]._id %> > <%= companies[i].compName %> </option>
+                                    <% } %>
+                                <% } %>
+
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Start Date</label>
+                        <div class="col-sm-10 mb-3">
+                            <input class="form-control" type="date" name="dueDate" value=<%= prevDue.dueDate?prevDue.dueDate.toISOString().split('T')[0]:null %> required>
+                        </div>
+
+                        <label for="staticEmail" class="col-sm-2 col-form-label">End Date</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="date" name="endDate" value=<%= prevDue.endDate?prevDue.endDate.toISOString().split('T')[0]:null %> >
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Duration</label>
+                        <div class="col-sm-5">
+                            <input type="number" name="duration" value= <%= prevDue.duration?prevDue.duration:1 %> class="form-control" required>
+                        </div>
+                        <div class="col-sm-5">
+                            <select class="form-control" name="unit" id="" required>
+
+                                <% if (prevDue.unit == 0) { %>
+                                    <option value="1">Year</option>
+                                    <option selected value="0">One Time</option>
+                                <% } else { %>
+                                    <option selected value="1">Year</option>
+                                    <option value="0">One Time</option>
+                                <% } %>
+                                 
+                                
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Amount</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" value= "<%= prevDue.ammount?prevDue.ammount:null %>" type="number" name="ammount" required>
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="5" name="description" required><%= prevDue.description?prevDue.description.trim():null %></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-auto ms-auto">    
+                        <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/foot") %>

@@ -1,0 +1,59 @@
+<%- include("../partials/head", {title:"Home"}) %>
+
+
+    <%-include("../partials/sidebar") %>
+
+
+    <div class="content">
+        <div class="container">
+            <div class="boxcont">
+                <h1>Add a Payment</h1>
+                <hr>
+
+                <form action=<%= prevPay._id?'/payment?editid='+prevPay._id:'/payment' %> method="post">
+                    <div class="mb-3 row mt-5">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Company</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="compId" id="" required>
+                                <% for( let i = 0; i < companies.length; i++ ) { %>
+                                    <% if (companies[i]._id == companyId) { %>
+                                        <option selected value=<%= companies[i]._id %> > <%= companies[i].compName %> </option>
+                                    <% } else { %>
+                                        <option value=<%= companies[i]._id %> > <%= companies[i].compName %> </option>
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Ammount</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="number" name="ammount" value="<%= prevPay.ammount?prevPay.ammount:null %>" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Pay Date</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="date" name="dueDate" value="<%= prevPay.dueDate?prevPay.dueDate.toISOString().split('T')[0]:null %>" required>
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="5" name="description" required> <%= prevPay.description?prevPay.description.trim():null %> </textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-auto ms-auto">
+                        <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/foot") %>

@@ -1,0 +1,83 @@
+<%- include("../partials/head", {title:"Home"}) %>
+
+
+    <%-include("../partials/sidebar") %>
+
+
+        <div class="content">
+            <div class="container">
+                <div class="boxcont">
+
+
+
+                    <div>
+                        <form action="" method="get" class="input-group mb-3">
+                            <input type="date" class="form-control" placeholder="Date" name="date">
+                            <button class="btn btn-success" type="submit" id="button-addon2">Get Dues</button>
+                        </form>
+                    </div>
+
+                    <div class="searchres mt-3">
+
+                        <% for( let i=0; i < data.length; i++ ) { %>
+
+                            <div class="card mt-3">
+                                <div class="card-header d-flex">
+                                    <h5 class="card-title mt-auto">
+                                        <a class="text-dark link-underline link-underline-opacity-0" href= "<%= "/info/" + data[i].compId %>">
+                                            <%= data[i].compName %>
+                                        </a>
+                                    </h5>
+                                    <a href= '<%= '/report/' + data[i].compId %>' class="btn btn-danger ms-auto">
+                                        Open Report
+                                    </a>
+                                </div>
+                                <div class="">
+
+                                    <table class="table table-sm mb-0">
+                                        <thead>
+                                          <tr class="table-secondary">
+                                            <th scope="col"></th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Due Amount</th>
+                                            <th scope="col">Pay Amount</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <% for( let j = 0; j < data[i].entries.length; j++ ) { %>
+                                                <tr>
+                                                    <th scope="row"></th>
+                                                    <th scope="row"> <%= data[i].entries[j].date.toLocaleDateString() %> </th>
+                                                    <td> <%= data[i].entries[j].description %> </td>
+                                                    <td> <%= data[i].entries[j].ammount>0?data[i].entries[j].ammount:'' %> </td>
+                                                    <td> <%= data[i].entries[j].ammount<0?data[i].entries[j].ammount*-1:'' %> </td>
+                                                </tr>
+                                            <% } %>
+                                            <tr class="table-secondary">
+                                                <th scope="row"></th>
+                                                <td> </td>
+                                                <td> <strong> Total </strong></td>
+                                                <td> <strong> <%= data[i].totalDues %> </strong> </td>
+                                                <td> <strong> <%= data[i].totalPays %> </strong> </td>
+                                            </tr>
+                                            <tr class="table-secondary">
+                                                <th scope="row"></th>
+                                                <td> <strong>  </strong> </td>
+                                                <td> <strong> Pending Dues </strong></td>
+                                                <td> <strong> <%= data[i].totalDues %> - <%= data[i].totalPays %> = <%= data[i].totalDues-data[i].totalPays %> </strong> </td>
+                                                <td> <strong>  </strong> </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("../partials/foot") %>

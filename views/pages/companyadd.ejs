@@ -1,0 +1,40 @@
+<%- include("../partials/head", {title:"Home"}) %>
+    <%-include("../partials/sidebar") %>
+
+    <div class="content">
+        <div class="container">
+            <div class="boxcont">
+                <h1>Add a Company</h1>
+                <hr>
+
+                <form action="/companyadd" method="post">    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="compName">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Phone Number</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="phone">
+                        </div>
+                    </div>
+    
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="5" name="description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-auto ms-auto">
+                        <button type="submit" class="btn btn-primary ms-auto">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/foot") %>

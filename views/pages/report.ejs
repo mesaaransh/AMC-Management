@@ -1,0 +1,55 @@
+<%- include("../partials/head", {title:"Home"}) %>
+
+
+    <%-include("../partials/sidebar") %>
+
+
+    <div class="content">
+        <div class="container">
+            <a class="text-dark link-underline link-underline-opacity-0" href= <%= "/info?id="  %> ><h3> <%= data[0].compName %> </h3></a>
+            <h5></h5>
+            <div class="boxcont">
+
+                <table class="table table-sm mb-0 mt-3">
+                    <thead>
+                      <tr class="table-secondary">
+                        <th scope="col"></th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Due Amount</th>
+                        <th scope="col">Pay Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                        <% for( let j = 0; j < data[0].entries.length; j++ ) { %>
+                            <tr>
+                                <th scope="row"></th>
+                                <th scope="row"> <%= data[0].entries[j].date.toLocaleDateString() %> </th>
+                                <td> <%= data[0].entries[j].description %> </td>
+                                <td> <%= data[0].entries[j].ammount>0?data[0].entries[j].ammount:'' %> </td>
+                                <td> <%= data[0].entries[j].ammount<0?data[0].entries[j].ammount*-1:'' %> </td>
+                            </tr>
+                        <% } %>
+                        <tr class="table-secondary">
+                            <th scope="row"></th>
+                            <td> </td>
+                            <td> <strong> Total </strong></td>
+                            <td> <strong> <%= data[0].totalDues %> </strong> </td>
+                            <td> <strong> <%= data[0].totalPays %> </strong> </td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="row"></th>
+                            <td> <strong>  </strong> </td>
+                            <td> <strong> Pending Dues </strong></td>
+                            <td> <strong> <%= data[0].totalDues %> - <%= data[0].totalPays %> = <%= data[0].totalDues-data[0].totalPays %> </strong> </td>
+                            <td> <strong>  </strong> </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/foot") %>
