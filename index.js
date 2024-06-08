@@ -3,6 +3,7 @@ const ejs = require("ejs")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const { v4: uuidv4 } = require('uuid')
+require('dotenv').config()
 
 const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -10,7 +11,7 @@ app.use(express.static("public"))
 app.set('view engine', 'ejs')
 
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb://localhost:27017/duesnpays').then(() => { console.log("DBCON"); })
+mongoose.connect('mongodb+srv://mesaaransh:' + process.env.pass + '@cluster0.mfqfmwp.mongodb.net/duesnpays').then(() => { console.log("DBCON"); })
 
 
 const companySchama = new mongoose.Schema({
@@ -78,12 +79,18 @@ app.get("/", function (req, res) {
 
 //Company Routes
 app.get("/companyadd", function (req, res) {
-    res.render("./pages/companyadd.ejs")
+    try {
+        res.render("./pages/companyadd.ejs")
+    } catch (error) {
+        res.send(error)
+    }
 })
 
 app.post("/companyadd", async function (req, res) {
+    
+    try {
 
-    let date = new Date()
+        let date = new Date()
     var newcompany = new companytable({
         ...req.body,
         _id: uuidv4(),
@@ -92,6 +99,10 @@ app.post("/companyadd", async function (req, res) {
 
     await newcompany.save()
     res.redirect("/companyadd")
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
@@ -114,19 +125,25 @@ app.post("/companyadd", async function (req, res) {
 //Due Routes
 app.get("/due", async function (req, res) {
 
-    var companies = await companytable.find({}, '_id compName');
-    var companyId = req.query.from;
-    var editId = req.query.editid;
-    var redir = req.query.redir?req.query.redir:"";
+    try {
 
-    if (editId) {
-        var prevDue = await peridueTable.findById(editId);
-        companyId = prevDue.compId;
-        res.render("./pages/due", { companies, companyId, prevDue, redir });
-    }
-    else {
-        var prevDue = {};
-        res.render("./pages/due", { companies, companyId, prevDue, redir });
+        var companies = await companytable.find({}, '_id compName');
+        var companyId = req.query.from;
+        var editId = req.query.editid;
+        var redir = req.query.redir?req.query.redir:"";
+    
+        if (editId) {
+            var prevDue = await peridueTable.findById(editId);
+            companyId = prevDue.compId;
+            res.render("./pages/due", { companies, companyId, prevDue, redir });
+        }
+        else {
+            var prevDue = {};
+            res.render("./pages/due", { companies, companyId, prevDue, redir });
+        }
+        
+    } catch (error) {
+        res.send(error)
     }
 
 })
@@ -179,21 +196,33 @@ app.post("/due", async function (req, res) {
 
 app.get("/enddue/:id", async function (req, res) {
 
-    const id = req.params.id
+    try {
+
+        const id = req.params.id
     var date = new Date();
     await peridueTable.findByIdAndUpdate(id, {
         endDate: date
     })
 
     res.redirect('back')
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
 app.get("/deldue/:id", async function (req, res) {
+    
+    try {
 
-    const id = req.params.id
+        const id = req.params.id
     await peridueTable.findByIdAndDelete(id)
     res.redirect('back')
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
@@ -215,7 +244,9 @@ app.get("/deldue/:id", async function (req, res) {
 //Payment Routes
 app.get("/payment", async function (req, res) {
 
-    var companies = await companytable.find({}, '_id compName');
+    try {
+
+        var companies = await companytable.find({}, '_id compName');
     var companyId = req.query.id;
     var editId = req.query.editid;
 
@@ -227,6 +258,10 @@ app.get("/payment", async function (req, res) {
     else {
         var prevPay = {};
         res.render("./pages/payment", { companies, companyId, prevPay })
+    }
+        
+    } catch (error) {
+        res.send(error)
     }
 
 })
@@ -261,9 +296,14 @@ app.post("/payment", async function (req, res) {
 
 app.get("/delpayment/:id", async function (req, res) {
 
-    var id = req.params.id;
-    await paymentTable.findByIdAndDelete(id);
-    res.redirect('back');
+    try {
+        var id = req.params.id;
+        await paymentTable.findByIdAndDelete(id);
+        res.redirect('back');
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
@@ -279,11 +319,16 @@ app.get("/delpayment/:id", async function (req, res) {
 //search routes
 app.get("/search", async function (req, res) {
 
-    var date = req.query.date;
-    if(!date) date = new Date();
-
-    var data = await searchPageEntries(date);
-    res.render('./pages/search', { data })
+    try {
+        
+        var date = req.query.date;
+        if(!date) date = new Date();
+    
+        var data = await searchPageEntries(date);
+        res.render('./pages/search', { data })
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
@@ -294,9 +339,14 @@ app.get("/search", async function (req, res) {
 //Report Routes
 app.get("/report/:id", async function (req, res) {
 
-    let compId = req.params.id
-    var data = await companyPageEntries(compId)
-    res.render('./pages/report', {data})
+    try {
+        let compId = req.params.id
+        var data = await companyPageEntries(compId)
+        res.render('./pages/report', {data})
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
@@ -308,13 +358,18 @@ app.get("/report/:id", async function (req, res) {
 
 app.get("/info/:id", async function(req, res){
 
-    var compId = req.params.id;
-    var company = await companytable.findById(compId);
-    var payments = await paymentTable.find({compId: compId});
-    var dues = await peridueTable.find({compId: compId});
-
-    console.log(company);
-    res.render('./pages/companyinfo', {company, payments, dues})
+    try {
+        var compId = req.params.id;
+        var company = await companytable.findById(compId);
+        var payments = await paymentTable.find({compId: compId});
+        var dues = await peridueTable.find({compId: compId});
+    
+        console.log(company);
+        res.render('./pages/companyinfo', {company, payments, dues})
+        
+    } catch (error) {
+        res.send(error)
+    }
 
 })
 
