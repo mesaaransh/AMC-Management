@@ -365,7 +365,7 @@ app.get("/info/:id", async function(req, res){
         var dues = await peridueTable.find({compId: compId});
     
         console.log(company);
-        res.render('./pages/companyinfo', {company, payments, dues})
+        res.render('./pages/companyInfo', {company, payments, dues})
         
     } catch (error) {
         res.send(error)
