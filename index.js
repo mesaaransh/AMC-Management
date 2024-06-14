@@ -78,28 +78,45 @@ app.get("/", function (req, res) {
 
 
 //Company Routes
-app.get("/companyadd", function (req, res) {
+app.get("/companyadd", async function (req, res) {
     try {
-        res.render("./pages/companyadd.ejs")
+
+        var editId = req.query.editid;
+        var redir = req.query.redir ? req.query.redir : "";
+
+        if(editId){
+            var company = await companytable.findById(editId)
+            res.render("./pages/companyadd.ejs", {company, redir, editId})
+        }
+        else{
+            var company = {}
+            res.render("./pages/companyadd.ejs", {company, redir, editId})
+        }
     } catch (error) {
         res.send(error)
     }
 })
 
 app.post("/companyadd", async function (req, res) {
-    
+
     try {
 
-        let date = new Date()
-    var newcompany = new companytable({
-        ...req.body,
-        _id: uuidv4(),
-        addDate: date
-    })
+        var editId = req.query.editid;
+        if(editId){
+            await companytable.findOneAndUpdate(editId, req.body)
+        }
+        else{
+            let date = new Date()
+            var newcompany = new companytable({
+                ...req.body,
+                _id: uuidv4(),
+                addDate: date
+            })
+            await newcompany.save()
+        }
 
-    await newcompany.save()
-    res.redirect("/companyadd")
-        
+        res.redirect("/companyadd")
+
     } catch (error) {
         res.send(error)
     }
@@ -130,8 +147,8 @@ app.get("/due", async function (req, res) {
         var companies = await companytable.find({}, '_id compName');
         var companyId = req.query.from;
         var editId = req.query.editid;
-        var redir = req.query.redir?req.query.redir:"";
-    
+        var redir = req.query.redir ? req.query.redir : "";
+
         if (editId) {
             var prevDue = await peridueTable.findById(editId);
             companyId = prevDue.compId;
@@ -141,7 +158,7 @@ app.get("/due", async function (req, res) {
             var prevDue = {};
             res.render("./pages/due", { companies, companyId, prevDue, redir });
         }
-        
+
     } catch (error) {
         res.send(error)
     }
@@ -161,7 +178,7 @@ app.post("/due", async function (req, res) {
 
         if (editId) {
             await peridueTable.findByIdAndUpdate(editId, data);
-            res.redirect('/info/'+req.query.redir);
+            res.redirect('/info/' + req.query.redir);
         }
         else {
 
@@ -181,11 +198,13 @@ app.post("/due", async function (req, res) {
 
             }
 
-            if(redir != ""){
-                res.redirect('/info/'+req.query.redir);
+            if (redir) {
+                res.redirect('/info/' + req.query.redir);
+                return;
             }
-            else{
+            else {
                 res.redirect('/due');
+                return;
             }
         }
     } catch (error) {
@@ -199,13 +218,13 @@ app.get("/enddue/:id", async function (req, res) {
     try {
 
         const id = req.params.id
-    var date = new Date();
-    await peridueTable.findByIdAndUpdate(id, {
-        endDate: date
-    })
+        var date = new Date();
+        await peridueTable.findByIdAndUpdate(id, {
+            endDate: date
+        })
 
-    res.redirect('back')
-        
+        res.redirect('back')
+
     } catch (error) {
         res.send(error)
     }
@@ -213,13 +232,13 @@ app.get("/enddue/:id", async function (req, res) {
 })
 
 app.get("/deldue/:id", async function (req, res) {
-    
+
     try {
 
         const id = req.params.id
-    await peridueTable.findByIdAndDelete(id)
-    res.redirect('back')
-        
+        await peridueTable.findByIdAndDelete(id)
+        res.redirect('back')
+
     } catch (error) {
         res.send(error)
     }
@@ -247,19 +266,19 @@ app.get("/payment", async function (req, res) {
     try {
 
         var companies = await companytable.find({}, '_id compName');
-    var companyId = req.query.id;
-    var editId = req.query.editid;
+        var companyId = req.query.id;
+        var editId = req.query.editid;
 
-    if (editId) {
-        var prevPay = await paymentTable.findById(editId);
-        companyId = prevPay.compId;
-        res.render("./pages/payment", { companies, companyId, prevPay })
-    }
-    else {
-        var prevPay = {};
-        res.render("./pages/payment", { companies, companyId, prevPay })
-    }
-        
+        if (editId) {
+            var prevPay = await paymentTable.findById(editId);
+            companyId = prevPay.compId;
+            res.render("./pages/payment", { companies, companyId, prevPay })
+        }
+        else {
+            var prevPay = {};
+            res.render("./pages/payment", { companies, companyId, prevPay })
+        }
+
     } catch (error) {
         res.send(error)
     }
@@ -300,7 +319,7 @@ app.get("/delpayment/:id", async function (req, res) {
         var id = req.params.id;
         await paymentTable.findByIdAndDelete(id);
         res.redirect('back');
-        
+
     } catch (error) {
         res.send(error)
     }
@@ -320,10 +339,10 @@ app.get("/delpayment/:id", async function (req, res) {
 app.get("/search", async function (req, res) {
 
     try {
-        
+
         var date = req.query.date;
-        if(!date) date = new Date();
-    
+        if (!date) date = new Date();
+
         var data = await searchPageEntries(date);
         res.render('./pages/search', { data })
     } catch (error) {
@@ -342,8 +361,8 @@ app.get("/report/:id", async function (req, res) {
     try {
         let compId = req.params.id
         var data = await companyPageEntries(compId)
-        res.render('./pages/report', {data})
-        
+        res.render('./pages/report', { data })
+
     } catch (error) {
         res.send(error)
     }
@@ -356,17 +375,15 @@ app.get("/report/:id", async function (req, res) {
 
 //info Routes
 
-app.get("/info/:id", async function(req, res){
+app.get("/info/:id", async function (req, res) {
 
     try {
         var compId = req.params.id;
         var company = await companytable.findById(compId);
-        var payments = await paymentTable.find({compId: compId});
-        var dues = await peridueTable.find({compId: compId});
-    
-        console.log(company);
-        res.render('./pages/companyInfo', {company, payments, dues})
-        
+        var payments = await paymentTable.find({ compId: compId });
+        var dues = await peridueTable.find({ compId: compId });
+        res.render('./pages/companyInfo', { company, payments, dues })
+
     } catch (error) {
         res.send(error)
     }
@@ -438,7 +455,7 @@ async function searchPageEntries(date) {
             var dueEntries = [];
             totalDues = 0;
 
-            if(inDate > startDate){
+            if (inDate > startDate) {
                 //initial date push
                 dueEntries.push({
                     date: startDate,
@@ -504,8 +521,8 @@ async function searchPageEntries(date) {
 async function companyPageEntries(id) {
 
     var companies = await companytable.findById(id);
-    var newPayments = await paymentTable.find({compId: id});
-    var newDues = await peridueTable.find({compId: id});
+    var newPayments = await paymentTable.find({ compId: id });
+    var newDues = await peridueTable.find({ compId: id });
 
     var res = [];
 

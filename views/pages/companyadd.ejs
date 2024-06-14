@@ -7,25 +7,25 @@
                 <h1>Add a Company</h1>
                 <hr>
 
-                <form action="/companyadd" method="post">    
+                <form action=<%= editId?"/companyadd?editid="+editId:"/companyadd" %> method="post">    
                     <div class="mb-3 row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input class="form-control" type="text" name="compName">
+                            <input class="form-control" type="text" name="compName" value='<%= company.compName?company.compName:'' %>'>
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Phone Number</label>
                         <div class="col-sm-10">
-                            <input class="form-control" type="text" name="phone">
+                            <input class="form-control" type="text" name="phone" value='<%= company.phone?company.phone:'' %>'>
                         </div>
                     </div>
     
                     <div class="mb-3 row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Description</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" rows="5" name="description"></textarea>
+                            <textarea class="form-control" rows="5" name="description" value='<%= company.description?company.description:'' %>'></textarea>
                         </div>
                     </div>
 
