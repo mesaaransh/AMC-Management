@@ -68,7 +68,7 @@ const companytable = mongoose.model("company", companySchama)
 
 
 app.get("/", function (req, res) {
-    res.redirect("/due")
+    res.redirect(307, "/due")
 
 })
 
@@ -84,13 +84,13 @@ app.get("/companyadd", async function (req, res) {
         var editId = req.query.editid;
         var redir = req.query.redir ? req.query.redir : "";
 
-        if(editId){
+        if (editId) {
             var company = await companytable.findById(editId)
-            res.render("./pages/companyadd.ejs", {company, redir, editId})
+            res.render("./pages/companyadd.ejs", { company, redir, editId })
         }
-        else{
+        else {
             var company = {}
-            res.render("./pages/companyadd.ejs", {company, redir, editId})
+            res.render("./pages/companyadd.ejs", { company, redir, editId })
         }
     } catch (error) {
         res.send(error)
@@ -102,10 +102,11 @@ app.post("/companyadd", async function (req, res) {
     try {
 
         var editId = req.query.editid;
-        if(editId){
-            await companytable.findOneAndUpdate(editId, req.body)
+        if (editId) {
+            await companytable.findOneAndUpdate(editId, req.body);
+            res.redirect(307, "/companyadd");
         }
-        else{
+        else {
             let date = new Date()
             var newcompany = new companytable({
                 ...req.body,
@@ -113,9 +114,9 @@ app.post("/companyadd", async function (req, res) {
                 addDate: date
             })
             await newcompany.save()
+            res.redirect(307, "/companyadd");
         }
 
-        res.redirect("/companyadd")
 
     } catch (error) {
         res.send(error)
@@ -203,7 +204,7 @@ app.post("/due", async function (req, res) {
                 return;
             }
             else {
-                res.redirect('/due');
+                res.redirect(307, '/due');
                 return;
             }
         }
@@ -303,7 +304,7 @@ app.post("/payment", async function (req, res) {
         else {
             const newpay = new paymentTable(data);
             await newpay.save();
-            res.redirect("/payment");
+            res.redirect(307, "/payment");
         }
 
 
